@@ -11,7 +11,7 @@ __This bundle is still in a very early stage of development.__
 ---
 
 ### Installation
-`composer require bambi/PostgresTextSearchBundle`
+`composer require bambi/bambi-postgres-text-search-bundle`
 
 ### Basic Usage
 ```php
