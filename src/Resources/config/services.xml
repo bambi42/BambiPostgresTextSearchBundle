@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service class="Bambi\PostgresTextSearchBundle\Doctrine\DBAL\Platforms\PostgreSQL100Platform"
+                 id="Bambi\PostgresTextSearchBundle\Doctrine\DBAL\Platforms\PostgreSQL100Platform"/>
+
+        <service class="Bambi\PostgresTextSearchBundle\ApiPlatform\Filter\TextSearchMatchFilter"
+                 id="bambi_postgres_text_search.filter.text_search_match_filter"
+                 abstract="true"
+                 public="false">
+            <argument type="service" id="doctrine" />
+            <argument>null</argument>
+            <argument type="service" id="logger" on-invalid="ignore" />
+            <argument key="$nameConverter" type="service" id="api_platform.name_converter" on-invalid="ignore" />
+        </service>
+        <service id="Bambi\PostgresTextSearchBundle\ApiPlatform\Filter\TextSearchMatchFilter"
+                 alias="bambi_postgres_text_search.filter.text_search_match_filter"/>
+    </services>
+</container>
