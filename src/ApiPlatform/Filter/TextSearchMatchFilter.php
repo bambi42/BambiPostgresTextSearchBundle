@@ -19,7 +19,7 @@ class TextSearchMatchFilter extends AbstractTextSearchFilter
 {
     private function processProperty(string $property, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass): ?string
     {
-        if (!$this->isPropertyEnabled($property, $resourceClass) || !$this->isPropertyMapped($property, $resourceClass, true)) {
+        if (!$this->isPropertyMapped($property, $resourceClass, true)) {
             return null;
         }
 
@@ -35,41 +35,39 @@ class TextSearchMatchFilter extends AbstractTextSearchFilter
 
     public function apply(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null, array $context = [])
     {
-        if (isset($context['filters']) && !isset($context['filters'][$this->textSearchParameterName])) {
+        if (!isset($context['filters'][$this->textSearchParameterName])) {
             return;
         }
 
-        if (!isset($context['filters'][$this->textSearchParameterName]) || !\is_array($context['filters'][$this->textSearchParameterName])) {
-            parent::apply($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
-
-            return;
-        }
-
-        if (count(array_flip($context['filters'][$this->textSearchParameterName])) === 1) {
-            $query = end($context['filters'][$this->textSearchParameterName]);
-        } else {
-            $this->logger->notice('Invalid filter ignored', [
-                'exception' => new InvalidArgumentException(sprintf('Multiple different query strings given for filter %s', $this->textSearchParameterName))
+        if (!is_string($context['filters'][$this->textSearchParameterName])) {
+            $this->logger->notice('Ignoring invalid filter', [
+                'exception' => new InvalidArgumentException(sprintf('Filter %s expects a value of type string, %s given', $this->textSearchParameterName, gettype($context['filters'][$this->textSearchParameterName])))
             ]);
             return;
         }
 
-        $properties = array_map(function ($p) {
-            return $this->denormalizePropertyName($p);
-        }, array_keys($context['filters'][$this->textSearchParameterName]));
+        $query = trim($context['filters'][$this->textSearchParameterName]);
+        if (!$query) {
+            return;
+        }
 
         $processedProperties = [];
-        foreach ($properties as $property) {
+        foreach ($this->getProperties() as $property) {
             if (($processedProperty = $this->processProperty($property, $queryBuilder, $queryNameGenerator, $resourceClass)) !== null) {
                 $processedProperties[] = $processedProperty;
             }
         }
+
+        if (!$processedProperties) {
+            return;
+        }
+
         $propertyExpr = sprintf("CONCAT(' ', %s)", implode(", ' ', ", $processedProperties));
 
         if (!$this->preVectorized) {
             $queryBuilder->andWhere(sprintf('ts_matches(websearch_to_tsquery(%s, :query), to_tsvector(%s, %s))=true', $this->postgresTsConfigString, $this->postgresTsConfigString, $propertyExpr));
         } else {
-            $queryBuilder->andWhere(sprintf('ts_matches(websearch_to_tsquery(%s, :query), %s)=true', $this->postgresTsConfigString, $this->postgresTsConfigString, $propertyExpr));
+            $queryBuilder->andWhere(sprintf('ts_matches(websearch_to_tsquery(%s, :query), %s)=true', $this->postgresTsConfigString, $propertyExpr));
         }
 
         $queryBuilder->setParameter('query', $query);
@@ -77,32 +75,20 @@ class TextSearchMatchFilter extends AbstractTextSearchFilter
 
     public function getDescription(string $resourceClass): array
     {
-        $description = [];
-
-        $properties = $this->getProperties();
-        if (null === $properties) {
-            $properties = array_fill_keys($this->getClassMetadata($resourceClass)->getFieldNames(), null);
-        }
-
-        foreach ($properties as $property => $propertyOptions) {
-            if (!$this->isPropertyMapped($property, $resourceClass)) {
-                continue;
+        $properties = [];
+        foreach ($this->getProperties() as $property) {
+            if ($this->isPropertyMapped($property, $resourceClass)) {
+                $properties[] = $this->normalizePropertyName($property);
             }
-            $propertyName = $this->normalizePropertyName($property);
-            $description[sprintf('%s[%s]', $this->textSearchParameterName, $propertyName)] = [
-                'property' => $propertyName,
-                'type' => 'string',
-                'required' => false,
-                'schema' => [
-                    'type' => 'string',
-                ],
-            ];
         }
 
-        return $description;
-    }
-
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
+        return [$this->textSearchParameterName => [
+            'property' => implode(', ', $properties),
+            'type' => 'string',
+            'required' => false,
+            'schema' => [
+                'type' => 'string',
+            ],
+        ]];
     }
 }

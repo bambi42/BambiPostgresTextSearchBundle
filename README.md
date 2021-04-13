@@ -32,11 +32,11 @@ class Book
         
         <!-- Enable properties for text search -->
         <argument type="collection">
-            <argument key="name" />
-            <argument key="isbn" />
+            <argument>name</argument>
+            <argument>isbn</argument>
         </argument>
         
-        <!-- Optionally you can configure the parameter name (default="text_search") for the for the API
+        <!-- Optionally you can configure the parameter name (default="ts_query") for the for the API
         and the config string (default="'english'") used by Postgres for text search. -->
         <argument key="$textSearchParameterName" type="string">postgres_text_search</argument>
         <argument key="$postgresTsConfigString" type="string">'german'</argument>
@@ -60,4 +60,4 @@ Bear in mind that the value for _postgresTsConfigString_ is directly passed on t
 </resource>
 ```
 You can access this filter via:
-`GET /api/books?postgres_text_search[name]=QUERY_STRING&postgres_text_search[isbn]=QUERY_STRING`
+`GET /api/books?postgres_text_search=QUERY_STRING`

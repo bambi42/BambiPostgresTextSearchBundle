@@ -13,7 +13,6 @@
                  abstract="true"
                  public="false">
             <argument type="service" id="doctrine" />
-            <argument>null</argument>
             <argument type="service" id="logger" on-invalid="ignore" />
             <argument key="$nameConverter" type="service" id="api_platform.name_converter" on-invalid="ignore" />
         </service>
