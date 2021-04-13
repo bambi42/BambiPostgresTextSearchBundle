@@ -33,7 +33,7 @@ class Book
         <!-- Enable properties for text search -->
         <argument type="collection">
             <argument key="name" />
-            <argument key="isbn"
+            <argument key="isbn" />
         </argument>
         
         <!-- Optionally you can configure the parameter name (default="text_search") for the for the API
