@@ -25,7 +25,7 @@ class TsMatches extends FunctionNode
     public function getSql(SqlWalker $sqlWalker)
     {
         return '(' .
-            $this->tsExpression1->dispatch($sqlWalker) . '@@ ' .
+            $this->tsExpression1->dispatch($sqlWalker) . ' @@ ' .
             $this->tsExpression2->dispatch($sqlWalker) . ')';
     }
 
