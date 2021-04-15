@@ -17,10 +17,18 @@ __This bundle is still in a very early stage of development.__
 ```php
 namespace App\Entity;
 
+class Author
+{
+    private string $name;
+    
+    ...
+}
+
 class Book
 {
     private string $name;
     private string $isbn;
+    private Author $author;
     
     ...
 }
@@ -30,10 +38,12 @@ class Book
     <service id="app.book.text_search_match_filter"
              parent="bambi_postgres_text_search.filter.text_search_match_filter">
         
-        <!-- Enable properties for text search -->
+        <!-- Properties that should be searched -->
         <argument type="collection">
             <argument>name</argument>
             <argument>isbn</argument>
+            <!-- You can also search fields of associated entities -->
+            <argument>author.name</argument>
         </argument>
         
         <!-- Optionally you can configure the parameter name (default="ts_query") for the for the API,
