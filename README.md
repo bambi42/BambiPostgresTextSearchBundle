@@ -48,8 +48,7 @@ class Book
         
         <!-- Optionally you can configure the parameter name (default="ts_query") for the for the API,
          the config string (default="'english'") used by Postgres for text search and if the column you
-         are searching is already vectorized (default=false). 
-         YOU HAVE TO DEFINE THOSE PARAMETERS IN THIS ORDER AND YOU ALWAYS HAVE TO DEFINE ALL PREVIOUS ONES! -->
+         are searching is already vectorized (default=false). -->
         <argument key="$textSearchParameterName" type="string">postgres_text_search</argument>
         <argument key="$postgresTsConfigString" type="string">'german'</argument>
         <argument key="$preVectorized">true</argument>
