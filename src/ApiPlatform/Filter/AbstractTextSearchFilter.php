@@ -31,7 +31,7 @@ abstract class AbstractTextSearchFilter implements FilterInterface
     protected bool $preVectorized;
     protected string $postgresTsConfigString;
 
-    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger = null, array $properties = null, NameConverterInterface $nameConverter = null, string $textSearchParameterName = 'ts_query', bool $preVectorized = false, $postgresTsConfigString = "'english'")
+    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger = null, array $properties = null, NameConverterInterface $nameConverter = null, string $textSearchParameterName = 'ts_query', $postgresTsConfigString = "'english'", bool $preVectorized = false)
     {
         $this->managerRegistry = $managerRegistry;
         $this->logger = $logger ?? new NullLogger();
