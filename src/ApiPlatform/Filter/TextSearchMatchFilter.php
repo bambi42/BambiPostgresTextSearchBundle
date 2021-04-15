@@ -30,7 +30,7 @@ class TextSearchMatchFilter extends AbstractTextSearchFilter
             [$alias, $field] = $this->addJoinsForNestedProperty($property, $alias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::LEFT_JOIN);
         }
 
-        return sprintf('%s.%s', $alias, $field);
+        return sprintf('COALESCE(%s.%s, \'\')', $alias, $field);
     }
 
     public function apply(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null, array $context = [])
