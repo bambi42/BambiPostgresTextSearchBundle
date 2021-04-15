@@ -21,12 +21,19 @@ class TsMatches extends FunctionNode
 {
     public $tsExpression1;
     public $tsExpression2;
+    public $expression2Parenthesis;
 
     public function getSql(SqlWalker $sqlWalker)
     {
-        return '(' .
-            $this->tsExpression1->dispatch($sqlWalker) . ' @@ ' .
-            $this->tsExpression2->dispatch($sqlWalker) . ')';
+        if ($this->expression2Parenthesis) {
+            return '(' .
+                $this->tsExpression1->dispatch($sqlWalker) . ' @@ ' . '(' .
+                $this->tsExpression2->dispatch($sqlWalker) . '))';
+        } else {
+            return '(' .
+                $this->tsExpression1->dispatch($sqlWalker) . ' @@ ' .
+                $this->tsExpression2->dispatch($sqlWalker) . ')';
+        }
     }
 
     public function parse(Parser $parser)
@@ -35,7 +42,15 @@ class TsMatches extends FunctionNode
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->tsExpression1 = $parser->StringPrimary();
         $parser->match(Lexer::T_COMMA);
-        $this->tsExpression2 = $parser->StringPrimary();
+        if ($parser->getLexer()->isNextToken(Lexer::T_OPEN_PARENTHESIS)) {
+            $this->expression2Parenthesis = true;
+            $parser->match(Lexer::T_OPEN_PARENTHESIS);
+            $this->tsExpression2 = $parser->StringPrimary();
+            $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+        } else {
+            $this->expression2Parenthesis = false;
+            $this->tsExpression2 = $parser->StringPrimary();
+        }
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 }

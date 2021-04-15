@@ -67,7 +67,7 @@ class TextSearchMatchFilter extends AbstractTextSearchFilter
         if (!$this->preVectorized) {
             $queryBuilder->andWhere(sprintf('ts_matches(websearch_to_tsquery(%s, :query), to_tsvector(%s, %s))=true', $this->postgresTsConfigString, $this->postgresTsConfigString, $propertyExpr));
         } else {
-            $queryBuilder->andWhere(sprintf('ts_matches(websearch_to_tsquery(%s, :query), %s)=true', $this->postgresTsConfigString, $propertyExpr));
+            $queryBuilder->andWhere(sprintf('ts_matches(websearch_to_tsquery(%s, :query), (%s))=true', $this->postgresTsConfigString, $propertyExpr));
         }
 
         $queryBuilder->setParameter('query', $query);
