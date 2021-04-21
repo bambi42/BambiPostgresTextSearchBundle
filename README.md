@@ -5,7 +5,7 @@ full-text search functionality in [Api-Platform](https://api-platform.com/).
 
 This bundle has been developed for and tested with PostgreSQL 12.
 
-## Work in Progress!
+### Work in Progress!
 __This bundle is still in a very early stage of development.__
 
 ---
