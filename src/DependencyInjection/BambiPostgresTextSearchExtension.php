@@ -56,6 +56,7 @@ class BambiPostgresTextSearchExtension extends Extension implements PrependExten
             'plainto_tsquery' => Query\PlaintoTsquery::class,
             'phraseto_tsquery' => Query\PhrasetoTsquery::class,
             'ts_matches'  => Query\TsMatches::class,
+            'text' => Query\Text::class,
         ];
         foreach($customDQLFunctions as $functionName => $functionNode) {
             $doctrineConfig['orm']['dql']['string_functions'][$functionName] = $functionNode;
