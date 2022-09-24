@@ -16,12 +16,12 @@ use Doctrine\DBAL\Types\Type;
 class Tsvector extends Type
 {
 
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'tsvector';
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'tsvector';
     }

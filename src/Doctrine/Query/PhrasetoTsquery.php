@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bambi\PostgresTextSearchBundle\Doctrine\Query;
 
+use Doctrine\ORM\Query\AST\ASTException;
 use Doctrine\ORM\Query\SqlWalker;
 
 /**
@@ -16,7 +17,12 @@ use Doctrine\ORM\Query\SqlWalker;
  */
 class PhrasetoTsquery extends ToTsquery
 {
-    public function getSql(SqlWalker $sqlWalker)
+    /**
+     * @param SqlWalker $sqlWalker
+     * @return string
+     * @throws ASTException
+     */
+    public function getSql(SqlWalker $sqlWalker): string
     {
         return 'phrase' . parent::getSql($sqlWalker);
     }

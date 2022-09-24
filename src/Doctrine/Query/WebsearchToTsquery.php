@@ -16,7 +16,11 @@ use Doctrine\ORM\Query\SqlWalker;
  */
 class WebsearchToTsquery extends ToTsquery
 {
-    public function getSql(SqlWalker $sqlWalker)
+    /**
+     * @param SqlWalker $sqlWalker
+     * @return string
+     */
+    public function getSql(SqlWalker $sqlWalker): string
     {
         return 'websearch_' . parent::getSql($sqlWalker);
     }
